@@ -1,22 +1,18 @@
 const express=require("express")
-const isAuth = require("../middleware/AUth")
+const { noteCreate, notesDelete, getNotesByUser, getSingleUserNotes, notesUpdate, GetAllNotesByAdmin, DeleteAllNotesByAdmin } = require("../controller/notes.controller")
+const isAuth = require("../middleware/Auth")
+const upload = require("../config/multer")
+const isAdmin = require("../middleware/Checkrole")
 
-const { createNotes, deleteNotes, GetAllNotesByUser, GetSingleNoteByUser, updateNote } = require("../controllers/notes.controler")
+const notesRouter=express.Router()
 
-const notesRouter= express.Router()
 
-notesRouter.post("/create",isAuth,createNotes)
+notesRouter.post("/create",isAuth,noteCreate)
+notesRouter.delete("/delete/:notesId",isAuth,notesDelete)
+notesRouter.get("/get/:userId",isAuth,getNotesByUser)
+notesRouter.get("/singlenotes/:notesId",isAuth,getSingleUserNotes)
+notesRouter.patch("/update/:notesId",isAuth,upload.single("file"),notesUpdate)
 
-// delete notes
-notesRouter.delete("/delate/:notesId",isAuth,deleteNotes)
-    
-// Get ALl notes of user
-notesRouter.get("/getallnotes/:userId",isAuth,GetAllNotesByUser)
-
-// single notes by user
-notesRouter.get("/getsinglenote/:notesId",isAuth,GetSingleNoteByUser)
-
-// update note
-notesRouter.patch("/updatenote/:notesId",isAuth,updateNote)
-
+notesRouter.get("/getallnotes",isAuth,isAdmin,GetAllNotesByAdmin)
+notesRouter.delete("/deleteallnotes",isAuth,isAdmin,DeleteAllNotesByAdmin)
 module.exports=notesRouter

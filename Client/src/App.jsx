@@ -1,16 +1,21 @@
-import React from 'react'
-import Allroutes from './Allroutes '
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import Allroutes from './Allroutes'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
-const App = () => {
+function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <div>
-      {/* <h4>Hello World</h4> */}
-      <Navbar />
+    <>
+    <Navbar />
       <Allroutes />
       <Footer />
-    </div>
+      
+    </>
   )
 }
 

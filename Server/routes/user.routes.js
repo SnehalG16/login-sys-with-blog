@@ -1,12 +1,9 @@
 const express=require("express")
-const { signup, signin } = require("../controllers/user.controller")
-const isAuth = require("../middleware/AUth")
-const userRouter=express.Router()
+const { signup, signin } = require("../controller/user.controller")
 
-// sinup route
-userRouter.post("/signup",signup)
+const UserRouter=express.Router()
 
-// signin route
-userRouter.post("/signin",signin)
+UserRouter.post("/signup",signup)
+UserRouter.post("/signin",signin)
 
-module.exports=userRouter
+module.exports=UserRouter

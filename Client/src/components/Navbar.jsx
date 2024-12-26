@@ -1,19 +1,44 @@
 import { Link } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
+import { Button } from "react-bootstrap";
+import axios from "axios";
+import { GiStabbedNote } from "react-icons/gi";
+import { IoHomeOutline } from "react-icons/io5";
+import { MdOutlineCreate } from "react-icons/md";
 
 export default function Navbar() {
-  const user = JSON.parse(localStorage.getItem("userData")) || {};
-  const { _id, name } = user;
+  const user=JSON.parse(localStorage.getItem("userData"))
+
+  const handleDelete=()=>{
+    axios.delete(`${import.meta.env.VITE_BASEURL}/notes/deleteallnotes`,{
+      withCredentials:true
+    })
+    .then((res)=>{
+      console.log(res.data)
+    
+    })
+    .catch((err)=>{
+      console.log(err)
+     
+    })
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
       <div className="container">
         <Link to="/" className="navbar-brand font-weight-bold">
           Home
+          <IoHomeOutline />
         </Link>
 
-        <Link to="/getallnotes" className="navbar-brand font-weight-bold">
+        <Link to="/notes" className="navbar-brand font-weight-bold">
           Notes
+          <GiStabbedNote />
+        </Link>
+
+        <Link to="/create-notes" className="navbar-brand font-weight-bold">
+          Create Notes
+          <MdOutlineCreate />
         </Link>
 
         <button
@@ -36,6 +61,7 @@ export default function Navbar() {
               placeholder="Search..."
               aria-label="Search"
             />
+           
           </div>
 
           <ul className="navbar-nav ms-auto align-items-center gap-2">
@@ -60,9 +86,7 @@ export default function Navbar() {
                 className="dropdown-menu dropdown-menu-end"
                 aria-labelledby="userDropdown"
               >
-                <li className="dropdown-header">
-                  {name ? `@${name}` : "Guest"}
-                </li>
+                <li className="dropdown-header">@username</li>
                 <li>
                   <Link to="/dashboard?tab=profile" className="dropdown-item">
                     Profile
@@ -77,17 +101,23 @@ export default function Navbar() {
               </ul>
             </li>
 
-            {name ? (
-              <li className="nav-item">
-                <span className="navbar-text">Welcome, {name}</span>
-              </li>
-            ) : (
-              <li className="nav-item">
-                <Link to="/sign-in" className="btn btn-outline-primary">
-                  Sign In
-                </Link>
-              </li>
-            )}
+            <li className="nav-item">
+              <Link to="/sign-in" className="btn btn-outline-primary">
+                Sign In
+              </Link>
+            </li>
+
+            {user?.role == "admin" && <li className="nav-item">
+              <Link to="/getallnotes" className="btn btn-outline-primary">
+                GetAllNotes
+              </Link>
+            </li>}
+
+            {user?.role == "admin" && <li className="nav-item">
+              <Button className="btn btn-outline-primary bg-white" onClick={handleDelete}>
+                DeleteAllNotes
+              </Button>
+            </li>}
           </ul>
         </div>
       </div>

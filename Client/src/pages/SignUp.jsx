@@ -3,31 +3,45 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-export default function SignUp() {
+
+function SignUp() {
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // To track loading state
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //logic
-    const  userData={name,email,password}
-    axios.post(`${import.meta.env.VITE_BASEURL}user/signup`,userData)
-    .then((res)=>{
-      console.log(res)
-      // toast.success("signup successfully")
-      alert("signup successfully")
-      navigate("/sign-in")
-    })
-    .catch((err)=>{
-      alert(err.response.data.message)
-      // toast.error(err.response.data.message)
-    })  
+    
+    // Validate inputs (basic validation for example purposes)
+    if (!name || !email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true); // Show loading spinner
+
+    // Sending data to backend
+    axios
+      .post(`${import.meta.env.VITE_BASEURL}/user/signup`, { name, email, password })
+      .then((res) => {
+        console.log(res.data.message);
+        setIsLoading(false); // Hide loading spinner
+        navigate("/sign-in");
+        toast.success(res.data.message);
+      })
+      .catch((err) => {
+        setIsLoading(false); // Hide loading spinner
+        console.error(err);
+        // Check if error response exists to prevent undefined errors
+        const errorMessage = err.response?.data?.message || "An error occurred!";
+        toast.error(errorMessage);
+      });
   };
 
   return (
-    <section style={{ backgroundColor: "#eee", minHeight: "100vh" }}>
+    <section style={{ backgroundColor: "#eee", minHeight: "100vh", paddingTop: "7%" }}>
       <div className="container py-3">
         <div className="row justify-content-center">
           <div className="col-lg-10 col-xl-9">
@@ -71,15 +85,14 @@ export default function SignUp() {
                       </div>
 
                       <div className="d-grid">
-                        <button type="submit" className="btn btn-primary">
-                          Register
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                          {isLoading ? <Spinner animation="border" size="sm" /> : "Register"}
                         </button>
                       </div>
 
                       <div className="text-center mt-3">
                         <p>
-                          Already have an account?{" "}
-                          <Link to="/sign-in">Login</Link>
+                          Already have an account? <Link to="/sign-in">Login</Link>
                         </p>
                       </div>
                     </form>
@@ -101,3 +114,5 @@ export default function SignUp() {
     </section>
   );
 }
+
+export default SignUp;
